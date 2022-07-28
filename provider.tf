@@ -6,3 +6,9 @@ terraform {
     }
   }
 }
+
+provider "azurerm" {
+  alias = "diagnostics"
+  features {}
+  subscription_id = var.diagnostic_settings != null ? var.diagnostic_settings.subscription_id : var.subscription_id
+}
