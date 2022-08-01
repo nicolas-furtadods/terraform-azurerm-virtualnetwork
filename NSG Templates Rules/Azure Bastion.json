@@ -1,0 +1,141 @@
+[
+    {
+      "name": "all-to-bastion-allow",
+      "priority": 100,
+      "direction": "Inbound",
+      "access": "Allow",
+      "protocol": "Tcp",
+      "source_port_range": "*",
+      "source_port_ranges": null,
+      "destination_port_range": null,
+      "destination_port_ranges": [
+        "443"
+      ],
+      "source_address_prefix": "Internet",
+      "source_address_prefixes": null,
+      "destination_address_prefix": "*",
+      "destination_address_prefixes": null
+    },
+    {
+      "name": "gateway-to-bastion-allow",
+      "priority": 101,
+      "direction": "Inbound",
+      "access": "Allow",
+      "protocol": "Tcp",
+      "source_port_range": "*",
+      "source_port_ranges": null,
+      "destination_port_range": null,
+      "destination_port_ranges": [
+        "443"
+      ],
+      "source_address_prefix": "GatewayManager",
+      "source_address_prefixes": null,
+      "destination_address_prefix": "*",
+      "destination_address_prefixes": null
+    },
+    {
+      "name": "load-balancer-to-bastion-allow",
+      "priority": 102,
+      "direction": "Inbound",
+      "access": "Allow",
+      "protocol": "Tcp",
+      "source_port_range": "*",
+      "source_port_ranges": null,
+      "destination_port_range": null,
+      "destination_port_ranges": [
+        "443"
+      ],
+      "source_address_prefix": "AzureLoadBalancer",
+      "source_address_prefixes": null,
+      "destination_address_prefix": "*",
+      "destination_address_prefixes": null
+    },
+    {
+      "name": "bastion-to-bastion-in",
+      "priority": 103,
+      "direction": "Inbound",
+      "access": "Allow",
+      "protocol": "*",
+      "source_port_range": "*",
+      "source_port_ranges": null,
+      "destination_port_range": null,
+      "destination_port_ranges": [
+        "8080",
+        "5701"
+      ],
+      "source_address_prefix": "VirtualNetwork",
+      "source_address_prefixes": null,
+      "destination_address_prefix": "VirtualNetwork",
+      "destination_address_prefixes": null
+    },
+    {
+      "name": "bastion-to-remote-out",
+      "priority": 100,
+      "direction": "Outbound",
+      "access": "Allow",
+      "protocol": "*",
+      "source_port_range": "*",
+      "source_port_ranges": null,
+      "destination_port_range": null,
+      "destination_port_ranges": [
+        "22",
+        "3389"
+      ],
+      "source_address_prefix": "*",
+      "source_address_prefixes": null,
+      "destination_address_prefix": "VirtualNetwork",
+      "destination_address_prefixes": null
+    },
+    {
+      "name": "bastion-to-cloud-out",
+      "priority": 101,
+      "direction": "Outbound",
+      "access": "Allow",
+      "protocol": "*",
+      "source_port_range": "*",
+      "source_port_ranges": null,
+      "destination_port_range": null,
+      "destination_port_ranges": [
+        "443"
+      ],
+      "source_address_prefix": "*",
+      "source_address_prefixes": null,
+      "destination_address_prefix": "AzureCloud",
+      "destination_address_prefixes": null
+    },
+    {
+      "name": "bastion-to-bastion-out",
+      "priority": 102,
+      "direction": "Outbound",
+      "access": "Allow",
+      "protocol": "*",
+      "source_port_range": "*",
+      "source_port_ranges": null,
+      "destination_port_range": null,
+      "destination_port_ranges": [
+        "8080",
+        "5701"
+      ],
+      "source_address_prefix": "VirtualNetwork",
+      "source_address_prefixes": null,
+      "destination_address_prefix": "VirtualNetwork",
+      "destination_address_prefixes": null
+    },
+    {
+      "name": "bastion-to-session-out",
+      "priority": 103,
+      "direction": "Outbound",
+      "access": "Allow",
+      "protocol": "*",
+      "source_port_range": "*",
+      "source_port_ranges": null,
+      "destination_port_range": null,
+      "destination_port_ranges": [
+        "80"
+      ],
+      "source_address_prefix": "*",
+      "source_address_prefixes": null,
+      "destination_address_prefix": "Internet",
+      "destination_address_prefixes": null
+    }
+  ]

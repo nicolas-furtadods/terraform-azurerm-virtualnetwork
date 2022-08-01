@@ -11,7 +11,7 @@ resource "azurerm_subnet" "subnet" {
     azurerm_virtual_network.vnet
   ]
   for_each                                       = var.subnets
-  name                                           = each.value.shortname == "bastion" ? "AzureBastionSubnet" : "snet-${local.naming_noapplication}-${each.value.shortname}"
+  name                                           = each.value.shortname == "bastion" ? "AzureBastionSubnet" : "snet-${local.naming_noapplication}-${each.value.shortname}-001"
   resource_group_name                            = var.resource_group_name
   virtual_network_name                           = azurerm_virtual_network.vnet.name
   address_prefixes                               = tolist([each.value.cidr])
@@ -36,6 +36,7 @@ resource "azurerm_subnet" "subnet" {
 
 }
 
+
 resource "azurerm_network_security_group" "nsg" {
   for_each            = var.subnets
   name                = "nsg-snet-${local.naming}-${each.value.shortname}-001"
@@ -47,7 +48,7 @@ resource "azurerm_network_security_group" "nsg" {
 module "templates" {
   source = "./Security Rules"
   for_each = {
-    for k, subnet in var.subnets : k => subnet if subnet.template != null && subnet.template != ""
+    for k, subnet in var.subnets : k => subnet if var.template_folder != null && var.template_folder != "" && subnet.template != null && subnet.template != ""
   }
   resource_group_name         = var.resource_group_name
   network_security_group_name = azurerm_network_security_group.nsg[each.key].name
@@ -65,6 +66,7 @@ resource "azurerm_subnet_network_security_group_association" "nsgsub" {
 
 }
 
+/*
 resource "azurerm_network_watcher_flow_log" "flow_logs" {
   for_each = {
     for k, subnet in var.subnets : k => subnet if var.diagnostic_settings != null
@@ -93,3 +95,4 @@ resource "azurerm_network_watcher_flow_log" "flow_logs" {
     interval_in_minutes   = var.diagnostic_settings.log_analytics.interval_in_minutes
   }
 }
+*/

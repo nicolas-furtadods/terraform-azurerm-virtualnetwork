@@ -14,3 +14,7 @@ output "virtual_network" {
     }
   }
 }
+
+output "templateInvocationCount" {
+  value = local.templateInvocationCount
+}

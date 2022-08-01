@@ -1,19 +1,32 @@
-variable "subscription_id" {
-  description = "ID of the subscription where resources will be created"
-}
-
+##########################################################################
+# 0. Global Configuration
+##########################################################################
 variable "application" {
   description = "Name of the application for which the virtual network is created (agw,corenet etc.)"
   type        = string
 }
 
 variable "technical_zone" {
-  description = "Enter a technical zone which will be used by resources (in,ex,cm,sh)"
+  description = "Enter a 2-digits technical zone which will be used by resources (in,ex,cm,sh)"
   type        = string
+
+  validation {
+    condition = (
+      length(var.technical_zone) > 0 &&  length(var.technical_zone) <= 2
+    )
+      error_message = "The technical zone must be a 2-digits string."
+  }
 }
 variable "environment" {
-  description = "Enter the environment which will be used by resources (hpr,sbx,prd,hyb)"
+  description = "Enter the 3-digits environment which will be used by resources (hpr,sbx,prd,hyb)"
   type        = string
+
+  validation {
+    condition = (
+      length(var.environment) > 0 &&  length(var.environment) <= 3
+    )
+      error_message = "The environment must be a 3-digits string."
+  }
 }
 
 variable "location" {
@@ -26,9 +39,13 @@ variable "tags" {
 }
 
 variable "resource_group_name" {
-  description = "Name of the resource group"
+  description = "Name of the resource group where resources will be created"
   type        = string
 }
+
+##########################################################################
+# 1. Virtual Network Configuration
+##########################################################################
 
 variable "vnet_cidr_block" {
   description = "CIDR block for VNET"
@@ -54,11 +71,21 @@ variable "subnets" {
   }))
 }
 
+
+##########################################################################
+# 2. Security Rules module
+##########################################################################
+
 variable "template_folder" {
   description = "A folder containing Network Security Rules as JSON. To use a file, you must call it by name."
   type        = string
   default     = null
 }
+
+##########################################################################
+# 3. Diagnostic_settings
+##########################################################################
+/*
 
 variable "diagnostic_settings" {
   description = "Object structure for information regarding diagnostics settings"
@@ -81,3 +108,4 @@ variable "diagnostic_settings" {
   })
   default = null
 }
+*/

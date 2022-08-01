@@ -1,0 +1,64 @@
+[
+    {
+      "name": "gatewaymanager-to-local-allow",
+      "priority": 100,
+      "direction": "Inbound",
+      "access": "Allow",
+      "protocol": "Tcp",
+      "source_port_range": "*",
+      "source_port_ranges": null,
+      "destination_port_range": "65200-65535",
+      "destination_port_ranges": null,
+      "source_address_prefix": "GatewayManager",
+      "source_address_prefixes": null,
+      "destination_address_prefix": "*",
+      "destination_address_prefixes": null
+    },
+    {
+      "name": "azureloadbalancer-to-local-allow",
+      "priority": 101,
+      "direction": "Inbound",
+      "access": "Allow",
+      "protocol": "*",
+      "source_port_range": "*",
+      "source_port_ranges": null,
+      "destination_port_range": "*",
+      "destination_port_ranges": null,
+      "source_address_prefix": "AzureLoadBalancer",
+      "source_address_prefixes": null,
+      "destination_address_prefix": "*",
+      "destination_address_prefixes": null
+    },
+    {
+        "name": "web-to-local-allow",
+        "priority": 102,
+        "direction": "Inbound",
+        "access": "Allow",
+        "protocol": "*",
+        "source_port_range": "*",
+        "source_port_ranges": null,
+        "destination_port_range": null,
+        "destination_port_ranges": [
+            "80","443"
+        ],
+        "source_address_prefix": "*",
+        "source_address_prefixes": null,
+        "destination_address_prefix": "VirtualNetwork",
+        "destination_address_prefixes": null
+      },
+    {
+      "name": "vnet-to-local-deny",
+      "priority": 4000,
+      "direction": "Inbound",
+      "access": "Allow",
+      "protocol": "*",
+      "source_port_range": "*",
+      "source_port_ranges": null,
+      "destination_port_range": "*",
+      "destination_port_ranges": null,
+      "source_address_prefix": "VirtualNetwork",
+      "source_address_prefixes": null,
+      "destination_address_prefix": "VirtualNetwork",
+      "destination_address_prefixes": null
+    }
+  ]

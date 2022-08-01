@@ -7,8 +7,12 @@ terraform {
   }
 }
 
+data "azurerm_subscription" "current" {
+}
+
 provider "azurerm" {
   alias = "diagnostics"
   features {}
-  subscription_id = var.diagnostic_settings != null ? var.diagnostic_settings.subscription_id : var.subscription_id
+  subscription_id = var.diagnostic_settings != null ? var.diagnostic_settings.subscription_id : data.azurerm_subscription.current.id
 }
+
