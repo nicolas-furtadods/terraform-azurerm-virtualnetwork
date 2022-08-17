@@ -12,9 +12,9 @@ variable "technical_zone" {
 
   validation {
     condition = (
-      length(var.technical_zone) > 0 &&  length(var.technical_zone) <= 2
+      length(var.technical_zone) > 0 && length(var.technical_zone) <= 2
     )
-      error_message = "The technical zone must be a 2-digits string."
+    error_message = "The technical zone must be a 2-digits string."
   }
 }
 variable "environment" {
@@ -23,9 +23,9 @@ variable "environment" {
 
   validation {
     condition = (
-      length(var.environment) > 0 &&  length(var.environment) <= 3
+      length(var.environment) > 0 && length(var.environment) <= 3
     )
-      error_message = "The environment must be a 3-digits string."
+    error_message = "The environment must be a 3-digits string."
   }
 }
 
@@ -71,6 +71,17 @@ variable "subnets" {
   }))
 }
 
+variable "vnet_dns_server" {
+  description = "VNET DNS server if you wish to use your custom DNS"
+  type        = list(string)
+  default     = []
+}
+
+variable "enable_nat_gateway" {
+  description = "Enale the creation and assignment of a NAT Gateway ?"
+  type = bool
+  default = false
+}
 
 ##########################################################################
 # 2. Security Rules module
@@ -85,12 +96,11 @@ variable "template_folder" {
 ##########################################################################
 # 3. Diagnostic_settings
 ##########################################################################
-/*
+
 
 variable "diagnostic_settings" {
   description = "Object structure for information regarding diagnostics settings"
   type = object({
-    subscription_id = string
     network_watcher = object({
       network_watcher_name                = string
       network_watcher_resource_group_name = string
@@ -108,4 +118,3 @@ variable "diagnostic_settings" {
   })
   default = null
 }
-*/

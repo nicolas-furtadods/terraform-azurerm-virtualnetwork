@@ -4,8 +4,8 @@ locals {
   ]
   templateInvocationCount = length(local.templateInvocation)
 }
-module input_validation {
-    source   = "./input_validation"
-    count    = local.templateInvocationCount > 0 && (var.template_folder == null || var.template_folder == "") ? 1 : 0
-    wrong_input = local.templateInvocationCount
+module "input_validation" {
+  source      = "./input_validation"
+  count       = local.templateInvocationCount > 0 && (var.template_folder == null || var.template_folder == "") ? 1 : 0
+  wrong_input = local.templateInvocationCount
 }

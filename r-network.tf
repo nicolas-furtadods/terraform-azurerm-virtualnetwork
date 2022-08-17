@@ -1,3 +1,7 @@
+##########################################################################
+# Virtual Network and Subnets
+##########################################################################
+
 resource "azurerm_virtual_network" "vnet" {
   name                = "vnet-${local.naming}-001"
   address_space       = var.vnet_cidr_block
@@ -6,12 +10,18 @@ resource "azurerm_virtual_network" "vnet" {
   tags                = var.tags
 }
 
+resource "azurerm_virtual_network_dns_servers" "dns" {
+  count              = length(var.vnet_dns_server) > 0 ? 1 : 0
+  virtual_network_id = azurerm_virtual_network.vnet.id
+  dns_servers        = var.vnet_dns_server
+}
+
 resource "azurerm_subnet" "subnet" {
   depends_on = [
     azurerm_virtual_network.vnet
   ]
   for_each                                       = var.subnets
-  name                                           = each.value.shortname == "bastion" ? "AzureBastionSubnet" : "snet-${local.naming_noapplication}-${each.value.shortname}-001"
+  name                                           = contains(local.reserved_subnets, each.value.shortname) ? each.value.shortname : "snet-${local.naming_noapplication}-${each.value.shortname}-001"
   resource_group_name                            = var.resource_group_name
   virtual_network_name                           = azurerm_virtual_network.vnet.name
   address_prefixes                               = tolist([each.value.cidr])
@@ -36,6 +46,9 @@ resource "azurerm_subnet" "subnet" {
 
 }
 
+##########################################################################
+# Network Security Group
+##########################################################################
 
 resource "azurerm_network_security_group" "nsg" {
   for_each            = var.subnets
@@ -66,33 +79,42 @@ resource "azurerm_subnet_network_security_group_association" "nsgsub" {
 
 }
 
-/*
-resource "azurerm_network_watcher_flow_log" "flow_logs" {
-  for_each = {
-    for k, subnet in var.subnets : k => subnet if var.diagnostic_settings != null
-  }
-  network_watcher_name      = var.diagnostic_settings.network_watcher.network_watcher_name
-  resource_group_name       = var.diagnostic_settings.network_watcher.network_watcher_resource_group_name
-  location                  = var.location
-  tags                      = var.tags
-  name                      = "${azurerm_network_security_group.nsg[each.key].name}${var.resource_group_name}-flowlog"
-  network_security_group_id = azurerm_network_security_group.nsg[each.key].id
 
-  storage_account_id = var.diagnostic_settings.storage_account.storage_account_id
-  enabled            = true
-  version            = 2
+##########################################################################
+# NAT Gateway
+##########################################################################
 
-  retention_policy {
-    enabled = true
-    days    = var.diagnostic_settings.storage_account.retention_days
-  }
-
-  traffic_analytics {
-    enabled               = true
-    workspace_id          = var.diagnostic_settings.log_analytics.workspace_id
-    workspace_region      = var.diagnostic_settings.log_analytics.workspace_region
-    workspace_resource_id = var.diagnostic_settings.log_analytics.workspace_resource_id
-    interval_in_minutes   = var.diagnostic_settings.log_analytics.interval_in_minutes
-  }
+resource "azurerm_public_ip" "nat_ip" {
+  count = var.enable_nat_gateway ? 1 : 0
+  name                = "pip-${local.naming}-001"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  tags                = var.tags
+  allocation_method   = "Static"
+  sku                 = "Standard"
 }
-*/
+
+resource "azurerm_nat_gateway" "nat_gw" {
+  count = var.enable_nat_gateway ? 1 : 0
+  name                    = "nat-${local.naming}-001"
+  resource_group_name     = var.resource_group_name
+  location                = var.location
+  tags                    = var.tags
+  sku_name                = "Standard"
+  idle_timeout_in_minutes = 10
+}
+
+resource "azurerm_nat_gateway_public_ip_association" "natgw_ip_assoc" {
+    count = var.enable_nat_gateway ? 1 : 0
+  nat_gateway_id       = azurerm_nat_gateway.nat_gw[0].id
+  public_ip_address_id = azurerm_public_ip.nat_ip[0].id
+}
+
+resource "azurerm_subnet_nat_gateway_association" "subnet_assoc" {
+  for_each = {
+    for k, subnet in azurerm_subnet.subnet :
+    k => subnet if azurerm_subnet.subnet[k].name != "gateway_subnet" && var.enable_nat_gateway
+  }
+  subnet_id      = azurerm_subnet.subnet[each.key].id
+  nat_gateway_id = azurerm_nat_gateway.nat_gw[0].id
+}
