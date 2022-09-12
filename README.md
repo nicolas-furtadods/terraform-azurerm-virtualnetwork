@@ -28,7 +28,7 @@ module "vnet" {
   application         = "azuretesting"
   environment         = "poc"
   location            = "francecentral"
-  resource_group_name = azurerm_resource_group.core_rg.name
+  resource_group_name = azurerm_resource_group.rg.name
   technical_zone      = "cm"
   tags = {
     "Application"        = "azuretesting",
