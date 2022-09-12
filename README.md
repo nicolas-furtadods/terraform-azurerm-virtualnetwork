@@ -85,7 +85,8 @@ The following arguments are supported:
   - `predefined_initiatives` - (Optional)  A map of `predefined_initiatives` object as defined below.
   - `predefined_policies` - (Optional)  A map of `predefined_policies` object as defined below.
   - `tags` - (Optional) A key-value map of string.
-  
+  - `vnet_dns_server` - (Optional) A List of custom DNS servers to use. Default to Azure managedd DNS when not provided.
+
 ##
 A `delegation` object support the following:
   - `name` - (Required) A name for this delegation.
