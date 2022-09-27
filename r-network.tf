@@ -20,14 +20,14 @@ resource "azurerm_subnet" "subnet" {
   depends_on = [
     azurerm_virtual_network.vnet
   ]
-  for_each                                       = var.subnets
-  name                                           = contains(local.reserved_subnets, each.value.shortname) ? each.value.shortname : "snet-${local.naming_noapplication}-${each.value.shortname}-001"
-  resource_group_name                            = var.resource_group_name
-  virtual_network_name                           = azurerm_virtual_network.vnet.name
-  address_prefixes                               = tolist([each.value.cidr])
-  enforce_private_link_service_network_policies  = each.value.enforce_private_link_service_network_policies
-  enforce_private_link_endpoint_network_policies = each.value.enforce_private_link_endpoint_network_policies
-  service_endpoints                              = each.value.service_endpoints
+  for_each                                      = var.subnets
+  name                                          = contains(local.reserved_subnets, each.value.shortname) ? each.value.shortname : "snet-${local.naming_noapplication}-${each.value.shortname}-001"
+  resource_group_name                           = var.resource_group_name
+  virtual_network_name                          = azurerm_virtual_network.vnet.name
+  address_prefixes                              = tolist([each.value.cidr])
+  private_link_service_network_policies_enabled = each.value.private_link_service_network_policies_enabled
+  private_endpoint_network_policies_enabled     = each.value.private_endpoint_network_policies_enabled
+  service_endpoints                             = each.value.service_endpoints
   dynamic "delegation" {
     for_each = each.value.delegation
     iterator = delegation
@@ -85,7 +85,7 @@ resource "azurerm_subnet_network_security_group_association" "nsgsub" {
 ##########################################################################
 
 resource "azurerm_public_ip" "nat_ip" {
-  count = var.enable_nat_gateway ? 1 : 0
+  count               = var.enable_nat_gateway ? 1 : 0
   name                = "pip-${local.naming}-001"
   resource_group_name = var.resource_group_name
   location            = var.location
@@ -95,7 +95,7 @@ resource "azurerm_public_ip" "nat_ip" {
 }
 
 resource "azurerm_nat_gateway" "nat_gw" {
-  count = var.enable_nat_gateway ? 1 : 0
+  count                   = var.enable_nat_gateway ? 1 : 0
   name                    = "nat-${local.naming}-001"
   resource_group_name     = var.resource_group_name
   location                = var.location
@@ -105,7 +105,7 @@ resource "azurerm_nat_gateway" "nat_gw" {
 }
 
 resource "azurerm_nat_gateway_public_ip_association" "natgw_ip_assoc" {
-    count = var.enable_nat_gateway ? 1 : 0
+  count                = var.enable_nat_gateway ? 1 : 0
   nat_gateway_id       = azurerm_nat_gateway.nat_gw[0].id
   public_ip_address_id = azurerm_public_ip.nat_ip[0].id
 }

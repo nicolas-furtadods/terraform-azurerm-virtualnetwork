@@ -36,7 +36,7 @@ variable "location" {
 variable "tags" {
   description = "Tags to apply to your resources"
   type        = map(string)
-  default = {}
+  default     = {}
 }
 
 variable "resource_group_name" {
@@ -56,12 +56,12 @@ variable "vnet_cidr_block" {
 variable "subnets" {
   description = "Map of resources and security rules"
   type = map(object({
-    shortname                                      = string
-    cidr                                           = string
-    enforce_private_link_service_network_policies  = bool
-    enforce_private_link_endpoint_network_policies = bool
-    service_endpoints                              = list(string)
-    template                                       = string
+    shortname                                     = string
+    cidr                                          = string
+    private_link_service_network_policies_enabled = bool
+    private_endpoint_network_policies_enabled     = bool
+    service_endpoints                             = list(string)
+    template                                      = string
     delegation = list(object({
       name = string
       service_delegation = list(object({
@@ -80,8 +80,8 @@ variable "vnet_dns_server" {
 
 variable "enable_nat_gateway" {
   description = "Enale the creation and assignment of a NAT Gateway ?"
-  type = bool
-  default = false
+  type        = bool
+  default     = false
 }
 
 ##########################################################################

@@ -49,7 +49,7 @@ module "vnet" {
     "privateendpoint" : {
       shortname                                      = "privatendpoint"
       cidr                                           = "10.1.1.0/24"
-      enforce_private_link_service_network_policies  = false
+      private_link_service_network_policies_enabled  = false
       enforce_private_link_endpoint_network_policies = true
       service_endpoints                              = []
       delegation                                     = []
@@ -125,10 +125,10 @@ A `storage_account` object support the following:
 A `subnet` object support the following:
   - `cidr` - (Required) The CIDR for the subnet within the virtual network adress block.
   - `delegation` - (Required) One or more `delegation` object as list as defined below.
-  - `enforce_private_link_service_network_policies` - (Required) Enable or Disable network policies for the private link endpoint on the subnet. Setting this to `true` will Disable the policy and setting this to `false` will Enable the policy.
-| ⚠ Network policies, like network security groups (NSG), are not supported for Private Link Endpoints or Private Link Services. In order to deploy a Private Link Endpoint on a given subnet, you must set the `enforce_private_link_endpoint_network_policies` attribute to `true`. This setting is only applicable for the Private Link Endpoint, for all other resources in the subnet access is controlled based via the Network Security Group which can be configured using the `azurerm_subnet_network_security_group_association` resource. |
-  - `enforce_private_link_service_network_policies` - (Required) Enable or Disable network policies for the private link service on the subnet. Setting this to `true` will Disable the policy and setting this to `false` will Enable the policy. Default value is `false`.
-| ⚠ In order to deploy a Private Link Service on a given subnet, you must set the `enforce_private_link_service_network_policies` attribute to `true`. This setting is only applicable for the Private Link Service, for all other resources in the subnet access is controlled based on the Network Security Group which can be configured using the `azurerm_subnet_network_security_group_association` resource. |
+  - `private_endpoint_network_policies_enabled` - (Required) Enable or Disable network policies for the private endpoint on the subnet. Setting this to `true` will Enable the policy and setting this to `false` will Disable the policy.
+| ⚠ Network policies, like network security groups (NSG), are not supported for Private Link Endpoints or Private Link Services. In order to deploy a Private Link Endpoint on a given subnet, you must set the `private_endpoint_network_policies`_enabled attribute to `false`. This setting is only applicable for the Private Link Endpoint, for all other resources in the subnet access is controlled based via the Network Security Group which can be configured using the `azurerm_subnet_network_security_group_association` resource. |
+  - `private_link_service_network_policies_enabled` - (Required) Enable or Disable network policies for the private link service on the subnet. Setting this to `true` will Enable the policy and setting this to `false` will Disable the policy.
+| ⚠ In order to deploy a Private Link Service on a given subnet, you must set the `private_link_service_network_policies_enabled` attribute to `false`. This setting is only applicable for the Private Link Service, for all other resources in the subnet access is controlled based on the Network Security Group which can be configured using the `azurerm_subnet_network_security_group_association` resource. |
 |--------------------------------------------------------------------------------------|
   - `service_endpoints` - (Required) The list of Service endpoints to associate with the subnet. Possible values include: `Microsoft.AzureActiveDirectory`, `Microsoft.AzureCosmosDB`, `Microsoft.ContainerRegistry`, `Microsoft.EventHub`, `Microsoft.KeyVault`, `Microsoft.ServiceBus`, `Microsoft.Sql`, `Microsoft.Storage` and `Microsoft.Web`.
   - `shortname` - (Required) A short name for the subnet. By convention, the subnet will have the following pattern: snet-<technical_zone>-<environnment>-<subnet.shortname>-001.
